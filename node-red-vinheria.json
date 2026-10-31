@@ -1,10 +1,18 @@
 [
     {
-        "id": "mqtt_in",
+        "id": "1c81e0c820e469f5",
+        "type": "tab",
+        "label": "Fluxo 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "9199bda7e1de46b1",
         "type": "mqtt in",
-        "z": "7f177626b355a691",
+        "z": "1c81e0c820e469f5",
         "name": "Recebe Telemetria",
-        "topic": "/TEF/device0XX/attrs",
+        "topic": "/TEF/device077/attrs",
         "qos": "0",
         "datatype": "utf8",
         "broker": "mqtt_broker",
@@ -12,11 +20,238 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 1040,
-        "y": 420,
+        "x": 310,
+        "y": 960,
         "wires": [
             [
-                "function_parser"
+                "f656bee7633a033d"
+            ]
+        ]
+    },
+    {
+        "id": "3b9e806a09ad49f4",
+        "type": "mqtt out",
+        "z": "1c81e0c820e469f5",
+        "name": "Envia Comando",
+        "topic": "/TEF/device077/cmd",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "mqtt_broker",
+        "x": 730,
+        "y": 1120,
+        "wires": []
+    },
+    {
+        "id": "f656bee7633a033d",
+        "type": "function",
+        "z": "1c81e0c820e469f5",
+        "name": "Processa Payload",
+        "func": "let msgPayload = msg.payload;\nlet partes = msgPayload.split('|');\n\nlet dados = {};\nfor (let i = 0; i < partes.length; i += 2) {\n    let chave = partes[i];\n    let valor = partes[i+1];\n    if (chave === 'T') dados.temperatura = parseFloat(valor);\n    if (chave === 'H') dados.umidade = parseFloat(valor);\n    if (chave === 'L') dados.luminosidade = parseInt(valor);\n    if (chave === 'TS') dados.timestamp = valor;\n}\n\nreturn [\n    { payload: dados.temperatura, topic: \"Temperatura (°C)\" },\n    { payload: dados.umidade, topic: \"Umidade (%)\" },\n    { payload: dados.luminosidade, topic: \"Luminosidade (LDR)\" }\n];",
+        "outputs": 3,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 550,
+        "y": 960,
+        "wires": [
+            [
+                "62bd02feaec2e715"
+            ],
+            [
+                "55e37ad64f885f55"
+            ],
+            [
+                "307d8baa3679d127"
+            ]
+        ]
+    },
+    {
+        "id": "62bd02feaec2e715",
+        "type": "ui_chart",
+        "z": "1c81e0c820e469f5",
+        "name": "Temperatura",
+        "group": "4872eeeae9d17dc7",
+        "order": 1,
+        "width": 6,
+        "height": 4,
+        "label": "Temperatura (°C)",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "Aguardando dados...",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "30",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 810,
+        "y": 900,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "55e37ad64f885f55",
+        "type": "ui_chart",
+        "z": "1c81e0c820e469f5",
+        "name": "Umidade",
+        "group": "4872eeeae9d17dc7",
+        "order": 2,
+        "width": 6,
+        "height": 4,
+        "label": "Umidade (%)",
+        "chartType": "line",
+        "legend": "false",
+        "interpolate": "linear",
+        "nodata": "Aguardando dados...",
+        "ymin": "0",
+        "ymax": "100",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#2ca02c",
+            "#aec7e8",
+            "#ff7f0e",
+            "#1f77b4",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 800,
+        "y": 960,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "307d8baa3679d127",
+        "type": "ui_chart",
+        "z": "1c81e0c820e469f5",
+        "name": "Luminosidade",
+        "group": "4872eeeae9d17dc7",
+        "order": 3,
+        "width": 6,
+        "height": 4,
+        "label": "Luminosidade (LDR)",
+        "chartType": "line",
+        "legend": "false",
+        "interpolate": "linear",
+        "nodata": "Aguardando dados...",
+        "ymin": "0",
+        "ymax": "4095",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#ff7f0e",
+            "#aec7e8",
+            "#1f77b4",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 810,
+        "y": 1020,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2ae63c62c13b839c",
+        "type": "ui_button",
+        "z": "1c81e0c820e469f5",
+        "name": "Ligar LED",
+        "group": "08f55e2a65535a8d",
+        "order": 1,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "Ligar LED",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "device077@on|",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 510,
+        "y": 1100,
+        "wires": [
+            [
+                "3b9e806a09ad49f4"
+            ]
+        ]
+    },
+    {
+        "id": "aabae2d0f55988e5",
+        "type": "ui_button",
+        "z": "1c81e0c820e469f5",
+        "name": "Desligar LED",
+        "group": "08f55e2a65535a8d",
+        "order": 2,
+        "width": 3,
+        "height": 1,
+        "passthru": false,
+        "label": "Desligar LED",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "device077@off|",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 520,
+        "y": 1140,
+        "wires": [
+            [
+                "3b9e806a09ad49f4"
             ]
         ]
     },
@@ -47,5 +282,38 @@
         "willMsg": {},
         "userProps": "",
         "sessionExpiry": ""
+    },
+    {
+        "id": "4872eeeae9d17dc7",
+        "type": "ui_group",
+        "name": "Gráficos de Sensores",
+        "tab": "6a612b88035aecce",
+        "order": 1,
+        "width": 6,
+        "collapse": false
+    },
+    {
+        "id": "08f55e2a65535a8d",
+        "type": "ui_group",
+        "name": "Controle do Atuador",
+        "tab": "6a612b88035aecce",
+        "order": 2,
+        "width": 6,
+        "collapse": false
+    },
+    {
+        "id": "6a612b88035aecce",
+        "type": "ui_tab",
+        "name": "Dashboard IoT",
+        "icon": "dashboard",
+        "order": 1
+    },
+    {
+        "id": "4f27a9a046d6d4a0",
+        "type": "global-config",
+        "env": [],
+        "modules": {
+            "node-red-dashboard": "3.6.6"
+        }
     }
 ]
